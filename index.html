@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kurunegala Medical Center - Advanced Healthcare Services</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom CSS for animations and specific styles */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        .animate-delay-1 {
+            animation-delay: 0.3s;
+        }
+
+        .animate-delay-2 {
+            animation-delay: 0.6s;
+        }
+
+        .animate-delay-3 {
+            animation-delay: 0.9s;
+        }
+
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
+
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .transition-all {
+            transition: all 0.3s ease;
+        }
+
+        .doctor-image {
+            /* Creates a custom shape for the doctor images */
+            clip-path: polygon(0 0, 100% 0, 100% 80%, 0 100%);
+        }
+
+        .mobile-menu {
+            /* Controls the height for the mobile menu dropdown animation */
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .mobile-menu.open {
+            /* Expands the mobile menu */
+            max-height: 500px; /* Sufficiently large value to show all content */
+        }
+
+        /* Styles for the 3D flip service cards */
+        .service-card {
+            perspective: 1000px; /* Establishes the 3D context */
+        }
+
+        .service-card-inner {
+            transition: transform 0.6s; /* Smooth flip animation */
+            transform-style: preserve-3d; /* Ensures child elements are positioned in 3D space */
+        }
+
+        .service-card:hover .service-card-inner {
+            transform: rotateY(180deg); /* Flips the card on hover */
+        }
+
+        .service-card-front, .service-card-back {
+            backface-visibility: hidden; /* Hides the back of the element when facing away */
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+        }
+
+        .service-card-back {
+            transform: rotateY(180deg); /* Initially rotated to be hidden */
+        }
+
+        .testimonial-card {
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Scroll to top button styles */
+        .scroll-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #3b82f6; /* blue-600 */
+            color: white;
+            padding: 12px 15px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 1000;
+        }
+
+        .scroll-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased text-gray-800">
+    <button id="scrollToTopBtn" class="scroll-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <header class="fixed w-full bg-white shadow-md z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center">
+                <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl mr-3">
+                    KMC
+                </div>
+                <h1 class="text-xl font-bold text-blue-800">Kurunegala Medical Center</h1>
+            </div>
+
+            <div class="hidden md:flex space-x-8">
+                <a href="#home" class="text-blue-600 font-medium hover:text-blue-800 transition-all">Home</a>
+                <a href="#services" class="text-gray-600 hover:text-blue-800 transition-all">Services</a>
+                <a href="#foreign-employment" class="text-gray-600 hover:text-blue-800 transition-all">Foreign Employment</a>
+                <a href="#contact" class="text-gray-600 hover:text-blue-800 transition-all">Contact</a>
+            </div>
+
+            <div class="hidden md:block">
+                <a href="#appointment" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium transition-all animate-pulse">
+                    Book Appointment
+                </a>
+            </div>
+
+            <button id="mobile-menu-button" class="md:hidden text-gray-600 focus:outline-none">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </div>
+
+        <div id="mobile-menu" class="mobile-menu md:hidden bg-white shadow-lg">
+            <div class="container mx-auto px-4 py-3 flex flex-col space-y-4">
+                <a href="#home" class="text-blue-600 font-medium py-2 border-b border-gray-100">Home</a>
+                <a href="#services" class="text-gray-600 py-2 border-b border-gray-100">Services</a>
+                <a href="#foreign-employment" class="text-gray-600 py-2 border-b border-gray-100">Foreign Employment</a>
+                <a href="#contact" class="text-gray-600 py-2 border-b border-gray-100">Contact</a>
+                <a href="#appointment" class="bg-blue-600 text-white px-6 py-2 rounded-full font-medium text-center my-2">
+                    Book Appointment
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <section id="home" class="hero-gradient pt-32 pb-20 text-white">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-10 md:mb-0 animate-fade-in">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">Advanced Healthcare <span class="text-blue-200">For Everyone</span></h2>
+                <p class="text-xl mb-8 text-blue-100">Kurunegala Medical Center provides world-class healthcare services with compassion and cutting-edge technology.</p>
+                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                    <a href="#appointment" class="bg-white text-blue-600 hover:bg-blue-50 px-8 py-3 rounded-full font-bold text-center transition-all">
+                        Book Appointment
+                    </a>
+                    <a href="#services" class="border-2 border-white hover:bg-white hover:bg-opacity-10 px-8 py-3 rounded-full font-bold text-center transition-all">
+                        Our Services
+                    </a>
+                </div>
+            </div>
+            <div class="md:w-1/2 animate-fade-in animate-delay-1">
+                <img src="https://intclinics.com/blog/wp-content/uploads/2020/04/laparoscopy2536-1-e1602160115921.jpg"
+                     alt="Placeholder Image for Medical Center"
+                     class="rounded-lg shadow-2xl doctor-image w-full max-w-md mx-auto">
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-white py-12 shadow-sm">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div class="animate-fade-in animate-delay-1">
+                    <div class="text-4xl font-bold text-blue-600 mb-2">50+</div>
+                    <div class="text-gray-600">Expert Doctors</div>
+                </div>
+                <div class="animate-fade-in animate-delay-2">
+                    <div class="text-4xl font-bold text-blue-600 mb-2">24/7</div>
+                    <div class="text-gray-600">Emergency Care</div>
+                </div>
+                <div class="animate-fade-in animate-delay-1">
+                    <div class="text-4xl font-bold text-blue-600 mb-2">100+</div>
+                    <div class="text-gray-600">Medical Beds</div>
+                </div>
+                <div class="animate-fade-in animate-delay-2">
+                    <div class="text-4xl font-bold text-blue-600 mb-2">10K+</div>
+                    <div class="text-gray-600">Patients Yearly</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16 animate-fade-in">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Our Medical Services</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Comprehensive healthcare services tailored to meet your individual needs with the highest standards of medical excellence.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="service-card h-64 relative animate-fade-in animate-delay-1">
+                    <div class="service-card-inner h-full w-full">
+                        <div class="service-card-front bg-white rounded-xl shadow-md p-6 flex flex-col items-center justify-center h-full w-full transition-all card-hover">
+                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                                <i class="fas fa-user-md text-blue-600 text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">Physical Exam</h3>
+                            <p class="text-gray-600 text-center">Comprehensive assessment of your physical and mental health.</p>
+                        </div>
+                        <div class="service-card-back bg-blue-600 text-white rounded-xl shadow-md p-6 flex flex-col justify-center h-full w-full">
+                            <h3 class="text-xl font-bold mb-2">Physical Exam Details</h3>
+                            <ul class="text-sm text-left space-y-1 pl-4 list-disc">
+                                <li>Assessing physical and mental health</li>
+                                <li>Measurements like height, weight, blood pressure</li>
+                                <li>General checkup of organs and systems</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="service-card h-64 relative animate-fade-in animate-delay-2">
+                    <div class="service-card-inner h-full w-full">
+                        <div class="service-card-front bg-white rounded-xl shadow-md p-6 flex flex-col items-center justify-center h-full w-full transition-all card-hover">
+                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                                <i class="fas fa-lungs text-blue-600 text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">Chest X-ray</h3>
+                            <p class="text-gray-600 text-center">Advanced imaging to identify abnormalities in lungs, heart, or chest.</p>
+                        </div>
+                        <div class="service-card-back bg-blue-600 text-white rounded-xl shadow-md p-6 flex flex-col justify-center h-full w-full">
+                            <h3 class="text-xl font-bold mb-2">Chest X-ray Details</h3>
+                            <ul class="text-sm text-left space-y-1 pl-4 list-disc">
+                                <li>Imaging test to identify abnormalities</li>
+                                <li>Focus on lungs, heart, or other chest organs</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="service-card h-64 relative animate-fade-in animate-delay-3">
+                    <div class="service-card-inner h-full w-full">
+                        <div class="service-card-front bg-white rounded-xl shadow-md p-6 flex flex-col items-center justify-center h-full w-full transition-all card-hover">
+                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                                <i class="fas fa-vial text-blue-600 text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">Blood Tests</h3>
+                            <p class="text-gray-600 text-center">Comprehensive laboratory tests for various health conditions.</p>
+                        </div>
+                        <div class="service-card-back bg-blue-600 text-white rounded-xl shadow-md p-6 flex flex-col justify-center h-full w-full">
+                            <h3 class="text-xl font-bold mb-2">Blood Test Details</h3>
+                            <ul class="text-sm text-left space-y-1 pl-4 list-disc">
+                                <li>Checking for tuberculosis</li>
+                                <li>Hepatitis screening</li>
+                                <li>HIV testing</li>
+                                <li>Other relevant conditions</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="service-card h-64 relative animate-fade-in animate-delay-1">
+                    <div class="service-card-inner h-full w-full">
+                        <div class="service-card-front bg-white rounded-xl shadow-md p-6 flex flex-col items-center justify-center h-full w-full transition-all card-hover">
+                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                                <i class="fas fa-child text-blue-600 text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">Pediatrics</h3>
+                            <p class="text-gray-600 text-center">Dedicated care for infants, children, and adolescents.</p>
+                        </div>
+                        <div class="service-card-back bg-blue-600 text-white rounded-xl shadow-md p-6 flex flex-col items-center justify-center h-full w-full">
+                            <h3 class="text-xl font-bold mb-2">Pediatrics Services</h3>
+                            <ul class="text-sm text-center space-y-1">
+                                <li>Well-child Visits</li>
+                                <li>Immunizations</li>
+                                <li>Developmental Screenings</li>
+                                <li>Acute Illness Care</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="service-card h-64 relative animate-fade-in animate-delay-2">
+                    <div class="service-card-inner h-full w-full">
+                        <div class="service-card-front bg-white rounded-xl shadow-md p-6 flex flex-col items-center justify-center h-full w-full transition-all card-hover">
+                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                                <i class="fas fa-bone text-blue-600 text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">Orthopedics</h3>
+                            <p class="text-gray-600 text-center">Comprehensive care for musculoskeletal conditions.</p>
+                        </div>
+                        <div class="service-card-back bg-blue-600 text-white rounded-xl shadow-md p-6 flex flex-col items-center justify-center h-full w-full">
+                            <h3 class="text-xl font-bold mb-2">Orthopedics Services</h3>
+                            <ul class="text-sm text-center space-y-1">
+                                <li>Fracture Management</li>
+                                <li>Joint Replacement</li>
+                                <li>Sports Medicine</li>
+                                <li>Spine Surgery</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="service-card h-64 relative animate-fade-in animate-delay-3">
+                    <div class="service-card-inner h-full w-full">
+                        <div class="service-card-front bg-white rounded-xl shadow-md p-6 flex flex-col items-center justify-center h-full w-full transition-all card-hover">
+                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                                <i class="fas fa-lungs text-blue-600 text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">Pulmonology</h3>
+                            <p class="text-gray-600 text-center">Diagnosis and treatment of respiratory diseases.</p>
+                        </div>
+                        <div class="service-card-back bg-blue-600 text-white rounded-xl shadow-md p-6 flex flex-col items-center justify-center h-full w-full">
+                            <h3 class="text-xl font-bold mb-2">Pulmonology Services</h3>
+                            <ul class="text-sm text-center space-y-1">
+                                <li>Asthma Management</li>
+                                <li>COPD Treatment</li>
+                                <li>Lung Cancer Screening</li>
+                                <li>Sleep Studies</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="foreign-employment" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16 animate-fade-in">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Specialized Foreign Employment Medical Screening</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">We provide comprehensive and authorized medical examinations for individuals seeking overseas employment or visas.</p>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-10 items-start">
+                <div class="lg:w-1/3 w-full animate-fade-in animate-delay-1">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Our Screening Process Includes:</h3>
+                    <ul class="text-lg text-gray-700 space-y-3 list-disc pl-5">
+                        <li>Physical Exam</li>
+                        <li>Chest X-ray</li>
+                        <li>Blood Tests</li>
+                        <li>Other Tests</li>
+                        <li>Visa Applications & IMEs</li>
+                        <li>eMedical Processing</li>
+                        <li>eMedical Referral Letter</li>
+                    </ul>
+                </div>
+                <div class="lg:w-2/3 w-full animate-fade-in animate-delay-2">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Countries We Specialize In:</h3>
+                    <div class="bg-gray-100 rounded-xl p-6 shadow-md">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-lg text-gray-700">
+                            <ul class="space-y-2 list-disc pl-5">
+                                <li>Serbia</li>
+                                <li>Romania</li>
+                                <li>Cyprus</li>
+                                <li>Croatia</li>
+                                <li>Malta</li>
+                                <li>Poland</li>
+                                <li>Turkey</li>
+                            </ul>
+                            <ul class="space-y-2 list-disc pl-5">
+                                <li>Ireland</li>
+                                <li>Germany</li>
+                                <li>France</li>
+                                <li>Hungary</li>
+                                <li>Czech Republic</li>
+                                <li>Austria</li>
+                                <li>Lithuania</li>
+                            </ul>
+                            <ul class="space-y-2 list-disc pl-5">
+                                <li>Slovakia</li>
+                                <li>Slovenia</li>
+                                <li>Netherlands</li>
+                                <li>Belgium</li>
+                                <li>Bulgaria</li>
+                                <li>Middle East countries</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section id="testimonials" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16 animate-fade-in">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">What Our Patients Say</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Hear from those who have experienced our compassionate care and excellent medical services.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                <div class="bg-gray-50 rounded-xl p-8 testimonial-card animate-fade-in animate-delay-1">
+                    <div class="flex items-center mb-6">
+                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=100&h=100&q=80" alt="Patient Sarah Doe" class="w-20 h-20 rounded-full object-cover mr-4 border-4 border-blue-200">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">Sarah Doe</h3>
+                            <p class="text-gray-600">Happy Patient</p>
+                        </div>
+                    </div>
+                    <p class="text-lg text-gray-700 leading-relaxed">"The doctors and staff at Kurunegala Medical Center are truly amazing. They provided me with exceptional care and made me feel comfortable throughout my treatment. Highly recommended!"</p>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-8 testimonial-card animate-fade-in animate-delay-2">
+                    <div class="flex items-center mb-6">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=100&h=100&q=80" alt="Patient John Smith" class="w-20 h-20 rounded-full object-cover mr-4 border-4 border-blue-200">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">John Smith</h3>
+                            <p class="text-gray-600">Satisfied Client</p>
+                        </div>
+                    </div>
+                    <p class="text-lg text-gray-700 leading-relaxed">"I was impressed by the professionalism and efficiency of KMC. From booking an appointment to receiving treatment, everything was seamless. A top-notch medical facility."</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="appointment" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16 animate-fade-in">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Book Your Appointment</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Schedule your visit with our specialists conveniently online.</p>
+            </div>
+
+            <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-8 animate-fade-in animate-delay-1">
+                <form class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="fullName" class="block text-gray-700 text-sm font-bold mb-2">Full Name</label>
+                        <input type="text" id="fullName" name="fullName" class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Your Full Name" required>
+                    </div>
+                    <div>
+                        <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email Address</label>
+                        <input type="email" id="email" name="email" class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="your@example.com" required>
+                    </div>
+                    <div>
+                        <label for="phone" class="block text-gray-700 text-sm font-bold mb-2">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="+94 7X XXX XXXX">
+                    </div>
+                    <div>
+                        <label for="specialty" class="block text-gray-700 text-sm font-bold mb-2">Preferred Specialty</label>
+                        <select id="specialty" name="specialty" class="shadow border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <option value="">Select a Specialty</option>
+                            <option value="physical-exam">Physical Exam</option>
+                            <option value="chest-x-ray">Chest X-ray</option>
+                            <option value="blood-tests">Blood Tests</option>
+                            <option value="pediatrics">Pediatrics</option>
+                            <option value="orthopedics">Orthopedics</option>
+                            <option value="pulmonology">Pulmonology</option>
+                            <option value="foreign-employment-medical-screening">Foreign Employment Medical Screening</option>
+                            <option value="immigration-medicals">Immigration Medical Examinations (IMEs)</option>
+                            <option value="general">General Practice</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="date" class="block text-gray-700 text-sm font-bold mb-2">Preferred Date</label>
+                        <input type="date" id="date" name="date" class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label for="time" class="block text-gray-700 text-sm font-bold mb-2">Preferred Time</label>
+                        <input type="time" id="time" name="time" class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="message" class="block text-gray-700 text-sm font-bold mb-2">Your Message (Optional)</label>
+                        <textarea id="message" name="message" rows="4" class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Describe your symptoms or specific needs"></textarea>
+                    </div>
+                    <div class="md:col-span-2 text-center">
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full transition-all animate-pulse">
+                            Submit Appointment
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16 animate-fade-in">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Get In Touch</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">We are here to answer your questions and provide the support you need.</p>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-10 items-center">
+                <div class="lg:w-1/2 w-full space-y-8">
+                    <div class="flex items-start bg-gray-50 p-6 rounded-xl shadow-md card-hover animate-fade-in animate-delay-1">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mr-6 flex-shrink-0">
+                            <i class="fas fa-map-marker-alt text-blue-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">Our Location</h3>
+                            <p class="text-gray-600">123 Main Street, Kurunegala, Sri Lanka</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start bg-gray-50 p-6 rounded-xl shadow-md card-hover animate-fade-in animate-delay-2">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mr-6 flex-shrink-0">
+                            <i class="fas fa-phone-alt text-blue-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">Phone Numbers</h3>
+                            <p class="text-gray-600">General Inquiries: <a href="tel:+94372223344" class="text-blue-600 hover:underline">+94 37 222 3344</a></p>
+                            <p class="text-gray-600">Appointments: <a href="tel:+94372225566" class="text-blue-600 hover:underline">+94 37 222 5566</a></p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start bg-gray-50 p-6 rounded-xl shadow-md card-hover animate-fade-in animate-delay-3">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mr-6 flex-shrink-0">
+                            <i class="fas fa-envelope text-blue-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">Email Address</h3>
+                            <p class="text-gray-600">info@kurunegalamc.com</p>
+                            <p class="text-gray-600">appointments@kurunegalamc.com</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:w-1/2 w-full h-96 lg:h-[500px] rounded-xl overflow-hidden shadow-lg animate-fade-in animate-delay-2">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3953.535870420791!2d80.36640531477797!3d7.73463879440618!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae327d73012a975%3A0x889816d96701b22e!2sKurunegala%20Teaching%20Hospital!5e0!3m2!1sen!2slk!4v1678901234567!5m2!1sen!2slk" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-gray-800 text-gray-300 py-12">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            <div>
+                <h3 class="text-xl font-bold text-white mb-4">Kurunegala Medical Center</h3>
+                <p class="text-sm">Providing advanced healthcare services with compassion and excellence since 1995.</p>
+                <div class="flex space-x-4 mt-6">
+                    <a href="#" class="text-gray-400 hover:text-blue-400 transition-colors"><i class="fab fa-facebook-f text-lg"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-blue-400 transition-colors"><i class="fab fa-twitter text-lg"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-blue-400 transition-colors"><i class="fab fa-instagram text-lg"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-blue-400 transition-colors"><i class="fab fa-linkedin-in text-lg"></i></a>
+                </div>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-white mb-4">Quick Links</h3>
+                <ul class="space-y-2">
+                    <li><a href="#home" class="hover:text-blue-400 transition-colors">Home</a></li>
+                    <li><a href="#services" class="hover:text-blue-400 transition-colors">Services</a></li>
+                    <li><a href="#foreign-employment" class="hover:text-blue-400 transition-colors">Foreign Employment</a></li>
+                    <li><a href="#contact" class="hover:text-blue-400 transition-colors">Contact Us</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-white mb-4">Contact Info</h3>
+                <p class="text-sm mb-2"><i class="fas fa-map-marker-alt mr-2"></i>123 Main Street, Kurunegala, Sri Lanka</p>
+                <p class="text-sm mb-2"><i class="fas fa-phone-alt mr-2"></i>+94 37 222 3344</p>
+                <p class="text-sm mb-2"><i class="fas fa-envelope mr-2"></i>info@kurunegalamc.com</p>
+                <p class="text-sm"><i class="fas fa-clock mr-2"></i>Mon - Fri: 8:00 AM - 8:00 PM</p>
+            </div>
+            <div class="md:col-span-3 lg:col-span-1">
+                <h3 class="text-xl font-bold text-white mb-4">Newsletter</h3>
+                <p class="text-sm mb-4">Stay updated with our latest news and health tips.</p>
+                <form class="flex">
+                    <input type="email" placeholder="Your email" class="w-full p-3 rounded-l-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-r-md transition-all">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="text-center text-gray-500 text-sm mt-10 border-t border-gray-700 pt-8">
+            © 2024 Kurunegala Medical Center. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle functionality
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('open');
+        });
+
+        // Close mobile menu when a link is clicked
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('open');
+            });
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Scroll-to-top button functionality
+        const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) { // Show button after scrolling 300px
+                scrollToTopBtn.classList.add('visible');
+            } else {
+                scrollToTopBtn.classList.remove('visible');
+            }
+        });
+
+        scrollToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Form submission handler (basic example)
+        const appointmentForm = document.querySelector('#appointment form');
+        if (appointmentForm) {
+            appointmentForm.addEventListener('submit', function(e) {
+                e.preventDefault(); // Prevent default form submission
+
+                // In a real application, you would send this data to a server
+                // For demonstration, we'll just log it and show a message.
+                const formData = new FormData(this);
+                const formObject = {};
+                formData.forEach((value, key) => {
+                    formObject[key] = value;
+                });
+
+                console.log('Appointment Request Submitted:', formObject);
+
+                // Display a simple confirmation message (instead of alert)
+                const submitButton = this.querySelector('button[type="submit"]');
+                submitButton.textContent = 'Request Sent!';
+                submitButton.classList.remove('bg-blue-600', 'hover:bg-blue-700', 'animate-pulse');
+                submitButton.classList.add('bg-green-500');
+                submitButton.disabled = true;
+
+                // Reset button after a few seconds
+                setTimeout(() => {
+                    submitButton.textContent = 'Submit Appointment';
+                    submitButton.classList.remove('bg-green-500');
+                    submitButton.classList.add('bg-blue-600', 'hover:bg-blue-700', 'animate-pulse');
+                    submitButton.disabled = false;
+                    this.reset(); // Clear the form
+                }, 3000);
+            });
+        }
+    </script>
+</body>
+</html>
